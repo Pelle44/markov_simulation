@@ -22,10 +22,14 @@ class Customer:
         self.location = entry_location
         self.history = [Timestamp(entry_time, self.location)]
 
+    def get_last_timestamp(self):
+        return self.history[len(self.history) - 1]
+
 class Location:
     def __init__(self, name):
         self.name = name
         self.customers = []
+
     def __str__(self):
         return f'Location: {self.name}'
 
@@ -41,7 +45,7 @@ if __name__ == '__main__':
     print(f'{supermarket.time}')
 
     customer = Customer(1, supermarket.time, supermarket.get_entry_location())
-    print(f'Customer is at {customer.location} at time {customer.history[len(customer.history) - 1].time}')
+    print(f'Customer is at {customer.location} at time {customer.get_last_timestamp().time}')
 
     # for loop that checks if the supermarket is before 21:50
     #   If so then incerement one minute and simulate generation/movement of customers
