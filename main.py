@@ -22,15 +22,16 @@ class Customer:
         self.id = id
         self.history = [Timestamp(entry_time, entry_location)]
 
-    def next_state(self, transition_matrix, time):
+    def next_state(self, transition_matrix, time, locations):
         """
         This function implements Markov Chain Simulation, and
         returns the next state given an initial state
         """
-        next_location = Location(np.random.choice(
+        next_location_name = np.random.choice(
             a = transition_matrix.index,
             p = transition_matrix[self.get_last_timestamp().location.name]
-        ))
+        )
+        next_location = locations[next_location_name]
         self.history.append(Timestamp(time, next_location))
 
     def get_last_timestamp(self):
@@ -74,7 +75,7 @@ if __name__ == '__main__':
         supermarket.time = supermarket.time + timedelta(minutes=1)
         if supermarket.time < timedelta(hours=21, minutes=50):
             for customer in customers:
-                customer.next_state(transition_matrix, supermarket.time)
+                customer.next_state(transition_matrix, supermarket.time, supermarket.locations)
                 timestamp = customer.get_last_timestamp()
                 print(f'Customer is at {timestamp.location.name} at time {timestamp.time}')
 
