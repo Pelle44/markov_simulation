@@ -3,6 +3,7 @@ import pandas as pd
 from datetime import timedelta
 
 from supermarket import Supermarket
+import avg_customers_per_min_calculator
 
 if __name__ == '__main__':
     
@@ -17,22 +18,7 @@ if __name__ == '__main__':
     transition_matrix.set_index('location', inplace=True)
     transition_matrix = transition_matrix.transpose()
 
-    NEW_CUSTOMERS_PER_MIN = {7: 1.6333333333333333, #data should come from data. To implemented
-                        8: 2.35,                
-                        9: 1.5166666666666666,
-                        10: 1.3166666666666667,
-                        11: 1.1166666666666667,
-                        12: 1.3166666666666667,
-                        13: 1.7666666666666666,
-                        14: 1.6166666666666667,
-                        15: 1.3333333333333333,
-                        16: 1.7833333333333334,
-                        17: 1.8833333333333333,
-                        18: 2.1666666666666665,
-                        19: 2.5,
-                        20: 1.6,
-                        21: 0.9333333333333333}
-    
+    NEW_CUSTOMERS_PER_MIN = avg_customers_per_min_calculator.get_avg_customers_per_min()
     
     id = 1
     
