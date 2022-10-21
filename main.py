@@ -3,7 +3,6 @@ import pandas as pd
 from datetime import timedelta
 
 from supermarket import Supermarket
-from customer import Customer
 
 if __name__ == '__main__':
     
