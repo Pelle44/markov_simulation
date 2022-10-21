@@ -11,8 +11,13 @@ class Supermarket:
         self.time = timedelta(hours=7)
 
     def close(self):
-        ## send customers to checkout
-        return True
+        """
+        Every customer, who did not check out, is send to checkout
+        """
+        for customer in customers:
+            if customer.get_last_location() != 'checkout':
+                customer.history.append(Timestamp(self.time, self.locations['checkout']))
+        return customer.history
 
     def get_entry_location(self):
         return self.locations['entry']
