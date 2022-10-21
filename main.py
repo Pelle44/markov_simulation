@@ -63,11 +63,11 @@ if __name__ == '__main__':
     #   If so then incerement one minute and simulate generation/movement of customers
     #   Else close store and send current customers to checkout
 
-    transition_matrix = pd.read_csv('transition_matrix.csv')
+    transition_matrix = pd.read_csv('./data/transition_matrix.csv')
     transition_matrix.set_index('location', inplace=True)
     transition_matrix = transition_matrix.transpose()
 
-    customers_per_min = {7: 1.6333333333333333, #data should come from data. To implemented
+    NEW_CUSTOMERS_PER_MIN = {7: 1.6333333333333333, #data should come from data. To implemented
                         8: 2.35,                
                         9: 1.5166666666666666,
                         10: 1.3166666666666667,
@@ -86,23 +86,22 @@ if __name__ == '__main__':
     
     id = 1
     
-    for i in range(900):
-        key = supermarket.time.seconds // 3600 #takes hour from time as key for dict
-        no_of_customers = round(np.random.normal(customers_per_min[key])) #generated customers per min
-        supermarket.time = supermarket.time + timedelta(minutes=1)
-        for no in range(no_of_customers): #adds generated customers to list
-            customer = Customer(id, supermarket.time, supermarket.get_entry_location())
-            customers.append(customer)
-            id = id + 1
-        if supermarket.time < timedelta(hours=21, minutes=50):
+    for i in range(899):
+        supermarket.time = supermarket.time + timedelta(minutes=1) #increment by 1 minute
+        if supermarket.time <= timedelta(hours=21, minutes=50): #if before closing time
+            key = supermarket.time.seconds // 3600 #takes hour from time as key for dict
+            no_of_customers = round(np.random.normal(NEW_CUSTOMERS_PER_MIN[key])) #generated customers per min
+            for no in range(no_of_customers): #adds generated customers to list
+                customer = Customer(id, supermarket.time, supermarket.get_entry_location())
+                customers.append(customer)
+                id = id + 1
             for customer in customers:
-                customer.next_state(transition_matrix, supermarket.time, supermarket.locations)
-                timestamp = customer.get_last_timestamp()
-                if customer.id == 600: # You can test it for random Customers
-                    print(f'{customer.id} is at {timestamp.location.name} at time {timestamp.time}')
-
-            # filter out customers at checkout
-            customers = filter(lambda customer: customer.get_last_location() != 'checkout', customers)
-            customers = list(customers) # need to set it back to list. Otherwise  can not append
+                if customer.get_last_location() != 'checkout':
+                    customer.next_state(transition_matrix, supermarket.time, supermarket.locations)
         else:
             supermarket.close()
+
+    for customer in customers:
+        #if customer.id == 1: # You can test it for random Customers
+            for timestamp in customer.history:
+                print(f'{customer.id} is at {timestamp.location.name} at time {timestamp.time}')
