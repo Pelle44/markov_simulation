@@ -1,6 +1,7 @@
 import numpy as np
 import pandas as pd
 from datetime import timedelta
+from time import sleep
 
 from supermarket import Supermarket
 import avg_customers_per_min_calculator
@@ -10,9 +11,7 @@ if __name__ == '__main__':
     supermarket = Supermarket()
     supermarket.open()
 
-    # for loop that checks if the supermarket is before 21:50
-    #   If so then incerement one minute and simulate generation/movement of customers
-    #   Else close store and send current customers to checkout
+    #log = pd.DataFrame() to be included
 
     transition_matrix = pd.read_csv('./data/transition_matrix.csv')
     transition_matrix.set_index('location', inplace=True)
@@ -31,6 +30,7 @@ if __name__ == '__main__':
                 customer = supermarket.generate_new_customer(id)
                 id = id + 1
             for location_name, location in supermarket.locations.items():
+                sleep(0.1)
                 if location_name != 'checkout':
                     for customer in location.customers:
                         customer.next_state(transition_matrix, supermarket.time, supermarket.locations)
