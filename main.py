@@ -2,60 +2,8 @@ import numpy as np
 import pandas as pd
 from datetime import timedelta
 
-class Supermarket:
-    def __init__(self):
-        location_names = ['entry', 'dairy', 'drinks', 'fruit', 'spices', 'checkout']
-        self.locations = {location_name: Location(location_name) for location_name in location_names}
-
-    def open(self):
-        self.time = timedelta(hours=7)
-
-    def close(self):
-        """
-        Every customer, who did not check out, is send to checkout
-        """
-        for customer in customers:
-            if customer.get_last_location() != 'checkout':
-                customer.history.append(Timestamp(self.time, self.locations['checkout']))
-        return customer.history
-
-    def get_entry_location(self):
-        return self.locations['entry']
-
-class Customer:
-    def __init__(self, id, entry_time, entry_location):
-        self.id = id
-        self.history = [Timestamp(entry_time, entry_location)]
-
-    def next_state(self, transition_matrix, time, locations):
-        """
-        This function implements Markov Chain Simulation, and
-        returns the next state given an initial state
-        """
-        next_location_name = np.random.choice(
-            a = transition_matrix.index,
-            p = transition_matrix[self.get_last_timestamp().location.name]
-        )
-        next_location = locations[next_location_name]
-        self.history.append(Timestamp(time, next_location))
-
-    def get_last_timestamp(self):
-        return self.history[-1]
-
-    def get_last_location(self):
-        return self.get_last_timestamp().location.name
-
-class Location:
-    def __init__(self, name):
-        self.name = name
-        self.customers = []
-
-class Timestamp:
-    def __init__(self, time, location):
-        self.time = time
-        self.location = location
-    def __repr__(self):
-        return (self.time, self.location)
+from supermarket import Supermarket
+from customer import Customer
 
 if __name__ == '__main__':
     
@@ -104,7 +52,8 @@ if __name__ == '__main__':
                 if customer.get_last_location() != 'checkout':
                     customer.next_state(transition_matrix, supermarket.time, supermarket.locations)
         else:
-            supermarket.close()
+            remaining_customers = [customer for customer in customers if customer.get_last_location() != 'checkout']
+            supermarket.close(remaining_customers)
 
     for customer in customers:
         #if customer.id == 1: # You can test it for random Customers
