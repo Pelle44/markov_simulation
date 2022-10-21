@@ -10,8 +10,6 @@ if __name__ == '__main__':
     supermarket = Supermarket()
     supermarket.open()
 
-    customers = []
-
     # for loop that checks if the supermarket is before 21:50
     #   If so then incerement one minute and simulate generation/movement of customers
     #   Else close store and send current customers to checkout
@@ -45,17 +43,11 @@ if __name__ == '__main__':
             key = supermarket.time.seconds // 3600 #takes hour from time as key for dict
             no_of_customers = round(np.random.normal(NEW_CUSTOMERS_PER_MIN[key])) #generated customers per min
             for no in range(no_of_customers): #adds generated customers to list
-                customer = Customer(id, supermarket.time, supermarket.get_entry_location())
-                customers.append(customer)
+                customer = supermarket.generate_new_customer(id)
                 id = id + 1
-            for customer in customers:
-                if customer.get_last_location() != 'checkout':
-                    customer.next_state(transition_matrix, supermarket.time, supermarket.locations)
+            for location_name, location in supermarket.locations.items():
+                if location_name != 'checkout':
+                    for customer in location.customers:
+                        customer.next_state(transition_matrix, supermarket.time, supermarket.locations)
         else:
-            remaining_customers = [customer for customer in customers if customer.get_last_location() != 'checkout']
-            supermarket.close(remaining_customers)
-
-    for customer in customers:
-        #if customer.id == 1: # You can test it for random Customers
-            for timestamp in customer.history:
-                print(f'{customer.id} is at {timestamp.location.name} at time {timestamp.time}')
+            supermarket.close()
