@@ -20,7 +20,7 @@ def get_avg_customers_per_min():
     # diveded by 5, because the data is for 5 days
     per_min_avg = data.groupby('hour')['customer_no'].count()/60/5
 
-    # make it to a dict
+    # make it a dict
     per_min_avg = dict(per_min_avg)
 
     return per_min_avg
